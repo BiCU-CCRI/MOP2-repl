@@ -1,0 +1,3 @@
+[submodule "MOP2"]
+	path = MOP2
+	url = https://github.com/biocorecrg/MOP2.git
