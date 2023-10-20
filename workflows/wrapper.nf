@@ -75,15 +75,15 @@ if (params.resume) exit 1, "Are you making the classical --resume typo? Be caref
 // check multi5 and GPU usage. GPU maybe can be removed as param if there is a way to detect it
 if (params.GPU != "ON" && params.GPU != "OFF") exit 1, "Please specify ON or OFF in GPU processors are available"
 
-// Define a list to store all comparisons
+// Define a list to store all sample directories
 conditionA_dir = []
 conditionB_dir = []
 
-// Iterate through NT and DOX samples and create comparisons
-for (ntSample in params.samples.NT) {
+// Iterate through samples from both conditions and create lists
+for (ntSample in params.samples.A) {
     conditionA_dir.add(ntSample)
 }
-for (doxSample in params.samples.DOX) {
+for (doxSample in params.samples.B) {
     conditionB_dir.add(doxSample)
 }
 
