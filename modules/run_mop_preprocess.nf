@@ -12,17 +12,15 @@ process RUN_MOP_PREPROCESS {
     path replicate
 
     output:
-    path out_* ,  emit: out_dir
-
+    val true
+    
     script:
     """
-    repl_name=\$(basename $replicate)
-    out_dir="out_\${repl_name}"
-    mkdir \$out_dir
+    mkdir -p $params.output_preprocess
     nextflow run ${params.pipeline_path}/mop_preprocess/mop_preprocess.nf --fast5 ${replicate}/*.fast5 \
         --reference $params.reference --annotation $params.annotation \
         --granularity $params.granularity --ref_type $params.ref_type \
-        --pars_tools $params.pars_tools_preprocess --output \$out_dir \
+        --pars_tools $params.pars_tools_preprocess --output $params.output_preprocess \
         --GPU $params.GPU --basecalling $params.basecalling \
         --demultiplexing $params.demultiplexing --demulti_fast5 $params.demulti_fast5 \
         --filtering $params.filtering --mapping $params.mapping \
