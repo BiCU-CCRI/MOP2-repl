@@ -8,17 +8,15 @@ nextflow.enable.dsl=2
 // Pipeline version
 version = '0.1'
 
-params.help            = false
-params.resume          = false
 
 log.info """
 
- __  __   ___   ____   __        __ ____      _     ____   ____   _____  ____  
-|  \/  | / _ \ |  _ \  \ \      / /|  _ \    / \   |  _ \ |  _ \ | ____||  _ \ 
-| |\/| || | | || |_) |  \ \ /\ / / | |_) |  / _ \  | |_) || |_) ||  _|  | |_) |
-| |  | || |_| ||  __/    \ V  V /  |  _ <  / ___ \ |  __/ |  __/ | |___ |  _ < 
-|_|  |_| \___/ |_|        \_/\_/   |_| \_\/_/   \_\|_|    |_|    |_____||_| \_\
-                                                                               
+███    ███  ██████  ██████  ██████      ██████  ███████ ██████  ██          ██     ██ ██████   █████  ██████  ██████  ███████ ██████  
+████  ████ ██    ██ ██   ██      ██     ██   ██ ██      ██   ██ ██          ██     ██ ██   ██ ██   ██ ██   ██ ██   ██ ██      ██   ██ 
+██ ████ ██ ██    ██ ██████   █████      ██████  █████   ██████  ██          ██  █  ██ ██████  ███████ ██████  ██████  █████   ██████  
+██  ██  ██ ██    ██ ██      ██          ██   ██ ██      ██      ██          ██ ███ ██ ██   ██ ██   ██ ██      ██      ██      ██   ██ 
+██      ██  ██████  ██      ███████     ██   ██ ███████ ██      ███████      ███ ███  ██   ██ ██   ██ ██      ██      ███████ ██   ██ 
+                                                                                                                                      
 
                                                                                        
 ====================================================
@@ -75,56 +73,56 @@ if (params.resume) exit 1, "Are you making the classical --resume typo? Be caref
 // check multi5 and GPU usage. GPU maybe can be removed as param if there is a way to detect it
 if (params.GPU != "ON" && params.GPU != "OFF") exit 1, "Please specify ON or OFF in GPU processors are available"
 
-// Define a list to store all sample directories
-conditionA_dir = []
-conditionB_dir = []
+// // Define a list to store all sample directories
+// conditionA_dir = []
+// conditionB_dir = []
 
-// Iterate through samples from both conditions and create lists
-for (ntSample in params.samples.A) {
-    conditionA_dir.add(ntSample)
-}
-for (doxSample in params.samples.B) {
-    conditionB_dir.add(doxSample)
-}
+// Read the path to the JSON file from params.config
+def samplesFile = new File(params.samples)
+def samplesJson = new groovy.json.JsonSlurper().parse(samplesFile)
+// Access the lists from the JSON content
+def conditionA_dir = samplesJson.A
+def conditionB_dir = samplesJson.B
+log.info "Sample directories: \n$conditionA_dir \n$conditionB_dir"
 
 include { RUN_MOP_PREPROCESS } from '../modules/run_mop_preprocess'
 include { RUN_MOP_MOD } from '../modules/run_mop_mod'
 include { RUN_MOP_CONSENSUS } from '../modules/run_mop_consensus'
 
-workflow {
-
-    def createEmptyDirectory(directoryPath) {
-        def directory = new File(directoryPath)
-        
-        if (!directory.exists()) {
-            if (directory.mkdirs()) {
-                println "New directory created at: $directoryPath"
-            } else {
-                println "Failed to create the directory at: $directoryPath"
-            }
+// Check if all output folders are present, if not, make new ones, otherwise missing samples will be added to existing folders
+def createEmptyDirectory(directoryPath) {
+    def directory = new File(directoryPath)
+    
+    if (!directory.exists()) {
+        if (directory.mkdirs()) {
+            println "New directory created at: $directoryPath"
         } else {
-            println "The directory already exists at: $directoryPath, new samples will be added."
+            println "Failed to create the directory at: $directoryPath"
         }
+    } else {
+        println "The directory already exists at: $directoryPath, new samples will be added."
     }
-
-    createEmptyDirectory(params.output_preprocess)
+}
+createEmptyDirectory(params.output_preprocess)
+createEmptyDirectory(params.output_mod)
+createEmptyDirectory(params.output_consensus)
+println(Channel.fromList(conditionA_dir).view { "$it" })
+workflow WRAPPER {
     RUN_MOP_PREPROCESS(Channel.fromList(conditionA_dir).mix(Channel.fromList(conditionB_dir)))
 
     // get the names of the samples and transform them into channels
-    def ch_conditionA_names = Channel.fromList(conditionA_dir).map { pathStr ->
-        def folderName = pathStr.tokenize('/').last()
+    ch_conditionA_names = Channel.fromList(conditionA_dir).map { pathStr ->
+        folderName = pathStr.tokenize('/').last()
         return folderName
     }    
-    def ch_conditionB_names = Channel.fromList(conditionB_dir).map { pathStr ->
-        def folderName = pathStr.tokenize('/').last()
+    ch_conditionB_names = Channel.fromList(conditionB_dir).map { pathStr ->
+        folderName = pathStr.tokenize('/').last()
         return folderName
     }    
     // pairing each condition A sample with every condition B sample
-    def ch_comparisons = ch_conditionA_names.combine(ch_conditionB_names)
-    createEmptyDirectory(params.output_mod)
+    ch_comparisons = ch_conditionA_names.combine(ch_conditionB_names)
     RUN_MOP_MOD(RUN_MOP_PREPROCESS.out, ch_comparisons)
 
-    createEmptyDirectory(params.output_consensus)
     RUN_MOP_CONSENSUS(RUN_MOP_MOD.out, ch_comparisons)
 
 }

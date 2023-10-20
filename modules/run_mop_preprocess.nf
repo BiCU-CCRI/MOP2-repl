@@ -16,7 +16,6 @@ process RUN_MOP_PREPROCESS {
     
     script:
     """
-    mkdir -p $params.output_preprocess
     nextflow run ${params.pipeline_path}/mop_preprocess/mop_preprocess.nf --fast5 ${replicate}/*.fast5 \
         --reference $params.reference --annotation $params.annotation \
         --granularity $params.granularity --ref_type $params.ref_type \

@@ -1,9 +1,0 @@
----
-NT:
-    rep1:   ./data/NT_03/*.fast5
-    rep2:   ./data/
-
-DOX:
-    rep1:   ./data/
-    rep2:   ./data/
-    rep3:   ./data/

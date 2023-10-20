@@ -1,0 +1,4 @@
+{
+    "A": ["/home/max_vdl/bioinf_isilon/core_bioinformatics_unit/Internal/max_vdl/coreBioinf/sims/mop2/MOP2-repl/data/NT_03", "/home/max_vdl/bioinf_isilon/core_bioinformatics_unit/Internal/max_vdl/coreBioinf/sims/mop2/MOP2-repl/data/NT_02"],
+    "B": ["/home/max_vdl/bioinf_isilon/core_bioinformatics_unit/Internal/max_vdl/coreBioinf/sims/mop2/MOP2-repl/data/DOX_03", "/home/max_vdl/bioinf_isilon/core_bioinformatics_unit/Internal/max_vdl/coreBioinf/sims/mop2/MOP2-repl/data/DOX_02", "/home/max_vdl/bioinf_isilon/core_bioinformatics_unit/Internal/max_vdl/coreBioinf/sims/mop2/MOP2-repl/data/DOX_01"]
+}

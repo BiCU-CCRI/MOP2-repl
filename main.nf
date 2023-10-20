@@ -1,4 +1,3 @@
-#!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MOP2-repl
@@ -8,7 +7,6 @@
 */
 
 nextflow.enable.dsl = 2
-#!/usr/bin/env nextflow
 
 // ENABLE DSL2
 nextflow.enable.dsl=2
@@ -25,7 +23,7 @@ if(params.help){
 // PRINT VERSION AND EXIT
 if(params.version){
     println """\
-
+    MOP2-repl Version 0.1
     """
     ["bash", "${baseDir}/bin/clean.sh", "${workflow.sessionId}"].execute()
     exit 0
