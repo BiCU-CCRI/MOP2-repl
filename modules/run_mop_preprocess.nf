@@ -10,13 +10,15 @@
 process RUN_MOP_PREPROCESS {
     input:
     path replicate
+    val container
 
     output:
     val true
     
     script:
     """
-    nextflow run ${params.pipeline_path}/mop_preprocess/mop_preprocess.nf --fast5 ${replicate}/*.fast5 \
+    nextflow run ${params.pipeline_path}/mop_preprocess/mop_preprocess.nf $container \
+        --fast5 ${replicate}/*.fast5 --conffile $params.conffile \
         --reference $params.reference --annotation $params.annotation \
         --granularity $params.granularity --ref_type $params.ref_type \
         --pars_tools $params.pars_tools_preprocess --output $params.output_preprocess \

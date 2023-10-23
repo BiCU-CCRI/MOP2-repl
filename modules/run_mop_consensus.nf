@@ -11,16 +11,17 @@ process RUN_MOP_CONSENSUS {
     input:
     val ready
     tuple val(sampleA), val(sampleB)
-    
+    val container
+
     output:
     val true
     
     script:
     """
     echo "${sampleA}\t${sampleB}" > comparison.tsv
-    nextflow run ${params.pipeline_path}/mop_consensus/mop_consensus.nf --input_path $params.output_mod \
-        --comparison comparison.tsv --reference $params.reference \
-        --padsize $params.padsize --output $params.output_consensus \
-        --email $params.email
+    nextflow run ${params.pipeline_path}/mop_consensus/mop_consensus.nf $container \
+        --input_path $params.output_mod --comparison comparison.tsv \
+        --reference $params.reference --padsize $params.padsize \
+        --output $params.output_consensus --email $params.email
     """
 }

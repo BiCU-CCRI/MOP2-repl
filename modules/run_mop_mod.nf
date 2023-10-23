@@ -11,6 +11,7 @@ process RUN_MOP_MOD {
     input:
     val ready
     tuple val(sampleA), val(sampleB)
+    val container
 
     output:
     val true
@@ -18,11 +19,11 @@ process RUN_MOP_MOD {
     script:
     """
     echo "${sampleA}\t${sampleB}" > comparison.tsv
-    nextflow run ${params.pipeline_path}/mop_mod/mop_mod.nf --input_path $params.output_preprocess \
+    nextflow run ${params.pipeline_path}/mop_mod/mop_mod.nf $container --input_path $params.output_preprocess \
         --comparison comparison.tsv --reference $params.reference \
         --pars_tools $params.pars_tools_preprocess --output $params.output_mod \
         --epinano $params.epinano --nanocompore $params.nanocompore \
-        --tombo_lsc $param.tombo.lsc --tombo_msc $params.tombo_msc \
+        --tombo_lsc $params.tombo_lsc --tombo_msc $params.tombo_msc \
         --epinano_plots $params.epinano_plots --email $params.email
     """
 }
