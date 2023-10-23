@@ -123,20 +123,33 @@ switch (params.container) {
         System.exit(1)
 }
 
+process ECHO_TUPLE {
+    input:
+    tuple val(string1), val(string2)
+    val logfile
+
+    script:
+    """
+    echo $string1 $string2 >> $logfile
+    """
+}
+def logfile = new File("${baseDir}/tmp.log")
+
 workflow WRAPPER {
     RUN_MOP_PREPROCESS(Channel.fromList(conditionA_dir).mix(Channel.fromList(conditionB_dir)), container)
 
     // get the names of the samples and transform them into channels
-    ch_conditionA_names = Channel.fromList(conditionA_dir).map { pathStr ->
-        folderName = pathStr.tokenize('/').last()
-        return folderName
+    ch_conditionA_names = Channel.fromList(conditionA_dir).map { pathStrA ->
+        folderNameA = pathStrA.tokenize('/').last()
+        return folderNameA
     }    
-    ch_conditionB_names = Channel.fromList(conditionB_dir).map { pathStr ->
-        folderName = pathStr.tokenize('/').last()
-        return folderName
+    ch_conditionB_names = Channel.fromList(conditionB_dir).map { pathStrB ->
+        folderNameB = pathStrB.tokenize('/').last()
+        return folderNameB
     }    
     // pairing each condition A sample with every condition B sample
     ch_comparisons = ch_conditionA_names.combine(ch_conditionB_names)
+    ECHO_TUPLE(ch_comparisons, logfile)
     RUN_MOP_MOD(RUN_MOP_PREPROCESS.out, ch_comparisons, container)
 
     RUN_MOP_CONSENSUS(RUN_MOP_MOD.out, ch_comparisons, container)
