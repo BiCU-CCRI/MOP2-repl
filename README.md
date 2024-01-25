@@ -6,11 +6,11 @@ MOP2-repl is a versatile pipeline that encapsulates the Master of Pores 2 (MOP2)
 
 MOP2-repl breaks down the MOP2 pipeline into three modular steps, each of which can be found under the `modules/` directory. Users can customize various parameters by editing the `params.config` file. The `samples` parameter in the configuration file should point to a JSON file containing the paths of samples and their respective replicates. It is essential to maintain the source structure as follows:
 
-datadirectory/
-Sample1_replicate1/
-*.fast5
-Sample2_replicate2/
-*.fast5
+- datadirectory/
+    - Sample1_replicate1/
+        - *.fast5
+    - Sample2_replicate2/
+        - *.fast5
 
 ## Resources
 
